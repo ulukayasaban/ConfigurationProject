@@ -1,10 +1,7 @@
 ﻿@page "/"
 @using ConfigurationLibrary.MongoDb
 @using ConfigurationLibrary.Models
-@*
-@inject IMongoRepository _repo
-@inject IConfiguration Configuration
-*@
+@inject IWebHostEnvironment env
 
 
 
@@ -43,7 +40,7 @@
 @code {
     private List<ConfigurationItem> allItems = new();
     private string searchText = "";
-
+    private string connectionString = "";
     private List<ConfigurationItem> filteredItems
     {
         get
@@ -60,7 +57,14 @@
     protected override async Task OnInitializedAsync()
     {
         
-        var connectionString = "mongodb://localhost:27017";
+        if(env.IsDevelopment())
+        {
+            connectionString = "mongodb://localhost:27017";
+        }
+        else
+        {
+            connectionString = "mongodb://mongodb:27017";
+        }
         var repository = new MongoRepository(connectionString);
 
         allItems = await repository.GetActiveItemsByAsync();
@@ -69,7 +73,14 @@
     private async Task Delete(string id)
     {
         
-        var connectionString = "mongodb://localhost:27017";
+        if(env.IsDevelopment())
+        {
+            connectionString = "mongodb://localhost:27017";
+        }
+        else
+        {
+            connectionString = "mongodb://mongodb:27017";
+        }
         var repository = new MongoRepository(connectionString);
 
         var result = await repository.DeleteAsync(id);

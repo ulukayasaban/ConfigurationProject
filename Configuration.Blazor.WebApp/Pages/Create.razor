@@ -1,6 +1,7 @@
 @page "/create"
 @using ConfigurationLibrary.Models
 @using ConfigurationLibrary.MongoDb
+@inject IWebHostEnvironment env
 
 <h3>Yeni Konfigürasyon Kaydı</h3>
 
@@ -42,10 +43,18 @@
     private bool success = false;
     private bool error = false;
 
-    private const string connectionString = "mongodb://localhost:27017";
+    private string connectionString = "";
 
     private async Task HandleValidSubmit()
     {
+        if(env.IsDevelopment())
+        {
+            connectionString = "mongodb://localhost:27017";
+        }
+        else
+        {
+            connectionString = "mongodb://mongodb:27017";
+        }
         var repo = new MongoRepository(connectionString); 
 
         var result = await repo.InsertAsync(item);

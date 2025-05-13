@@ -1,6 +1,7 @@
 ﻿@page "/edit/{id}"
 @using ConfigurationLibrary.Models
 @using ConfigurationLibrary.MongoDb
+@inject IWebHostEnvironment env
 
 <h3>Konfigürasyon Düzenle</h3>
 
@@ -56,10 +57,18 @@ else
     private bool success = false;
     private bool error = false;
 
-    private const string connectionString = "mongodb://localhost:27017";
+    private string connectionString = "";
 
     protected override async Task OnInitializedAsync()
     {
+        if(env.IsDevelopment())
+        {
+            connectionString = "mongodb://localhost:27017";
+        }
+        else
+        {
+            connectionString = "mongodb://mongodb:27017";
+        }
         if (!string.IsNullOrEmpty(id))
         {
             var repo = new MongoRepository(connectionString);
@@ -69,6 +78,14 @@ else
 
     private async Task HandleValidSubmit()
     {
+        if(env.IsDevelopment())
+        {
+            connectionString = "mongodb://localhost:27017";
+        }
+        else
+        {
+            connectionString = "mongodb://mongodb:27017";
+        }
         var repo = new MongoRepository(connectionString);
         var result = await repo.UpdateAsync(item!);
         success = result;

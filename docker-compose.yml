@@ -1,0 +1,27 @@
+
+services:
+  mongodb:
+    image: mongo:6.0
+    container_name: configurationproject-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+      - ./docker/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+    environment:
+      MONGO_INITDB_DATABASE: ConfigurationDb
+
+  blazorweb:
+    build:
+      context: .
+      dockerfile: Configuration.Blazor.WebApp/Dockerfile
+    container_name: configurationproject-blazor
+    ports:
+      - "5050:8080"
+    depends_on:
+      - mongodb
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+
+volumes:
+  mongo_data:
