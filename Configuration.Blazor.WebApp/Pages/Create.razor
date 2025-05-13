@@ -1,0 +1,60 @@
+@page "/create"
+@using ConfigurationLibrary.Models
+@using ConfigurationLibrary.MongoDb
+
+<h3>Yeni Konfigürasyon Kaydı</h3>
+
+<EditForm Model="@item" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-2">
+        <label>Name:</label>
+        <InputText @bind-Value="item.Name" class="form-control" />
+    </div>
+    <div class="mb-2">
+        <label>Type:</label>
+        <InputText @bind-Value="item.Type" class="form-control" />
+    </div>
+    <div class="mb-2">
+        <label>Value:</label>
+        <InputText @bind-Value="item.Value" class="form-control" />
+    </div>
+    <div class="mb-2">
+        <label>Is Active:</label>
+        <InputCheckbox @bind-Value="item.IsActive" class="form-check-input" />
+    </div>
+    <div class="mb-2">
+        <label>Application Name:</label>
+        <InputText @bind-Value="item.ApplicationName" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Kaydet</button>
+</EditForm>
+
+@if (success)
+{
+    <div class="alert alert-success mt-3">Kayıt başarıyla eklendi!</div>
+}
+
+@code {
+    private ConfigurationItem item = new();
+    private bool success = false;
+    private bool error = false;
+
+    private const string connectionString = "mongodb://localhost:27017";
+
+    private async Task HandleValidSubmit()
+    {
+        var repo = new MongoRepository(connectionString); 
+
+        var result = await repo.InsertAsync(item);
+        success = result;
+        error = !result;
+
+        if (result)
+        {
+            item = new();
+        }
+    }
+}

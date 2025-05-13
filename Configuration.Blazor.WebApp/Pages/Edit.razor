@@ -1,0 +1,77 @@
+﻿@page "/edit/{id}"
+@using ConfigurationLibrary.Models
+@using ConfigurationLibrary.MongoDb
+
+<h3>Konfigürasyon Düzenle</h3>
+
+@if (item == null)
+{
+    <p>Yükleniyor...</p>
+}
+else
+{
+    <EditForm Model="@item" OnValidSubmit="HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="mb-2">
+            <label>Name:</label>
+            <InputText @bind-Value="item.Name" class="form-control" />
+        </div>
+        <div class="mb-2">
+            <label>Type:</label>
+            <InputText @bind-Value="item.Type" class="form-control" />
+        </div>
+        <div class="mb-2">
+            <label>Value:</label>
+            <InputText @bind-Value="item.Value" class="form-control" />
+        </div>
+        <div class="mb-2">
+            <label>Is Active:</label>
+            <InputCheckbox @bind-Value="item.IsActive" class="form-check-input" />
+        </div>
+        <div class="mb-2">
+            <label>Application Name:</label>
+            <InputText @bind-Value="item.ApplicationName" class="form-control" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Güncelle</button>
+    </EditForm>
+
+    @if (success)
+    {
+        <div class="alert alert-success mt-3">Kayıt başarıyla güncellendi!</div>
+    }
+    @if (error)
+    {
+        <div class="alert alert-danger mt-3">Güncelleme başarısız.</div>
+    }
+}
+
+@code {
+    [Parameter]
+    public string? id { get; set; }
+
+    private ConfigurationItem? item;
+    private bool success = false;
+    private bool error = false;
+
+    private const string connectionString = "mongodb://localhost:27017";
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!string.IsNullOrEmpty(id))
+        {
+            var repo = new MongoRepository(connectionString);
+            item = await repo.GetByIdAsync(id);
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        var repo = new MongoRepository(connectionString);
+        var result = await repo.UpdateAsync(item!);
+        success = result;
+        error = !result;
+    }
+}

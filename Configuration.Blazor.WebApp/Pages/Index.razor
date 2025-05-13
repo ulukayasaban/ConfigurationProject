@@ -1,0 +1,81 @@
+﻿@page "/"
+@using ConfigurationLibrary.MongoDb
+@using ConfigurationLibrary.Models
+@*
+@inject IMongoRepository _repo
+@inject IConfiguration Configuration
+*@
+
+
+
+<h3>Konfigürasyonlar</h3>
+
+<input @bind="searchText" placeholder="İsme göre filtrele..." class="form-control mb-2" />
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Value</th>
+            <th>Type</th>
+            <th>App</th>
+            <th>İşlem</th> @* yeni sütun *@
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in filteredItems)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>@item.Value</td>
+                <td>@item.Type</td>
+                <td>@item.ApplicationName</td>
+                <td>
+                    <a class="btn btn-sm btn-primary me-2" href="/edit/@item.Id">Düzenle</a>
+                    <button class="btn btn-sm btn-danger" @onclick="() => Delete(item.Id)">Sil</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+@code {
+    private List<ConfigurationItem> allItems = new();
+    private string searchText = "";
+
+    private List<ConfigurationItem> filteredItems
+    {
+        get
+        {
+            if (string.IsNullOrWhiteSpace(searchText))
+            {
+                return allItems;
+            }
+
+            return allItems.Where(item =>item.Name != null &&item.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase)).ToList();
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        
+        var connectionString = "mongodb://localhost:27017";
+        var repository = new MongoRepository(connectionString);
+
+        allItems = await repository.GetActiveItemsByAsync();
+    }
+
+    private async Task Delete(string id)
+    {
+        
+        var connectionString = "mongodb://localhost:27017";
+        var repository = new MongoRepository(connectionString);
+
+        var result = await repository.DeleteAsync(id);
+        if (result)
+        {
+            allItems = allItems.Where(x => x.Id != id).ToList();
+        }
+    }
+}
