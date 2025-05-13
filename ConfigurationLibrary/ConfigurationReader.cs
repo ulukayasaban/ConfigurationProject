@@ -29,7 +29,7 @@ public class ConfigurationReader
     {
         try
         {
-            _cache = await _repository.GetActiveItemsByAsync(); 
+            _cache = await _repository.GetActiveItemsByAsync(_applicationName); 
             
         }
         catch(Exception ex)
@@ -45,7 +45,7 @@ public class ConfigurationReader
     {
         try
         {
-            var latestData = await _repository.GetActiveItemsByAsync();
+            var latestData = await _repository.GetActiveItemsByAsync(_applicationName);
             _cache = latestData;
         }
         catch(Exception ex)

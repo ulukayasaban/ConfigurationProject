@@ -5,7 +5,7 @@ namespace ConfigurationLibrary.MongoDb;
 
 public interface IMongoRepository
 {
-    Task<List<ConfigurationItem>> GetActiveItemsByAsync();//
+    Task<List<ConfigurationItem>> GetActiveItemsByAsync(string applicationName);//
     Task<bool> InsertAsync(ConfigurationItem item);//
 
     Task<bool> UpdateAsync(ConfigurationItem item);//

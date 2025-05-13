@@ -27,10 +27,10 @@ public class MongoRepository:IMongoRepository
         }
     }
 
-    public async Task<List<ConfigurationItem>> GetActiveItemsByAsync()
+    public async Task<List<ConfigurationItem>> GetActiveItemsByAsync(string applicationName)
     {
         
-        var items = await _collection.Find(x => x.IsActive).ToListAsync();
+        var items = await _collection.Find(x => x.IsActive && x.ApplicationName == applicationName).ToListAsync();
         //var items = await _collection.Find(_ => true).ToListAsync();
 
         return items;

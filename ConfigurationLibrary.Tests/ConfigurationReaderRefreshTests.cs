@@ -11,7 +11,8 @@ public class ConfigurationReaderRefreshTests
     public async Task RefreshDataAsync_Should_Update_Cache_With_Latest_Data()
     {
         var mockRepo = new Mock<IMongoRepository>();
-        mockRepo.Setup(repo => repo.GetActiveItemsByAsync())
+        string applicationName = "SERVICE-A";
+        mockRepo.Setup(repo => repo.GetActiveItemsByAsync(applicationName))
                 .ReturnsAsync(new List<ConfigurationItem>
                 {
                     new ConfigurationItem

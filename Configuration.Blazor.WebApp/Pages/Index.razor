@@ -67,7 +67,7 @@
         }
         var repository = new MongoRepository(connectionString);
 
-        allItems = await repository.GetActiveItemsByAsync();
+        allItems = await repository.GetActiveItemsByAsync("SERVICE-A");
     }
 
     private async Task Delete(string id)

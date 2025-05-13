@@ -62,15 +62,15 @@ public class MongoRepositoryTests
     public async Task GetActiveItemsByAsync_Should_Return_ActiveItems()
     {
         var repoMock = new Mock<IMongoRepository>();
-
-        repoMock.Setup(r => r.GetActiveItemsByAsync())
+        string applicationName = "SERVICE-A";
+        repoMock.Setup(r => r.GetActiveItemsByAsync(applicationName))
                 .ReturnsAsync(new List<ConfigurationItem>
                 {
                     new ConfigurationItem { Name = "SiteName", IsActive = true },
                     new ConfigurationItem { Name = "Theme", IsActive = true }
                 });
 
-        var result = await repoMock.Object.GetActiveItemsByAsync();
+        var result = await repoMock.Object.GetActiveItemsByAsync(applicationName);
 
         Assert.NotNull(result);
         Assert.Equal(2, result.Count);
